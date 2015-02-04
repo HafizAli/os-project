@@ -1,19 +1,57 @@
-/*
-    C socket server example
-*/
- 
-#include<stdio.h>
-#include<string.h>    //strlen
-#include<sys/socket.h>
-#include<arpa/inet.h> //inet_addr
-#include<unistd.h>    //write
- 
-int main(int argc , char *argv[])
-{
+#include <stdio.h>
+#include <string.h>    //strlen
+#include <sys/socket.h>
+#include <arpa/inet.h> //inet_addr
+#include <unistd.h>    //write
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <stdio.h>
+#include <sys/un.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <string.h>
+# include <stdio.h>
+# include <pthread.h>
+
+    
     int socket_desc , client_sock , c , read_size;
     struct sockaddr_in server , client;
     char client_message[2000];
-     
+
+                   ///// write(client_sock , "127.168.1.1" , 10));
+void * writethread()
+{
+    while(1)
+    { 
+        printf("writing .......   \n");
+        char message[1000];
+        ///scanf("%s" , message); 
+      gets(message);
+       write(client_sock , message , strlen(message));
+    }
+}        
+
+void * readthread()
+{
+     printf("reading.......   \n");
+       while( (read_size = recv(client_sock , client_message , 2000 , 0)) > 0 )
+                {
+
+                    //Send the message back to client
+                    puts(client_message);
+                    /////////client_message=NULL;
+                    printf("Enter message : ");
+                    
+                }
+}
+int main(int argc , char *argv[])
+{
+    
+
+    int con1,con2;
+    pthread_t r,w;
+
     //Create socket
     socket_desc = socket(AF_INET , SOCK_STREAM , 0);
     if (socket_desc == -1)
@@ -53,19 +91,29 @@ int main(int argc , char *argv[])
     puts("Connection accepted");
    
     //Receive a message from client
-				while( (read_size = recv(client_sock , client_message , 2000 , 0)) > 0 )
-				{
-				    //Send the message back to client
-				    puts(client_message);
-				    /////////client_message=NULL;
-				    printf("Enter message : ");
-				    char message[1000];
-				    ///scanf("%s" , message);
-				    gets(message);
-				    
-				    write(client_sock , message , strlen(message));
-				   ///// write(client_sock , "127.168.1.1" , 10));
-				}
+				
+
+                con1 = pthread_create(&r, NULL,readthread,NULL);
+                if (con1 != 0)
+                {
+                    perror("read Thread creation failed");
+                    
+                }
+
+
+                con2 = pthread_create(&w, NULL,writethread,NULL);
+                if (con2 != 0)
+                {
+                    perror("read Thread creation failed");
+                    
+                }
+
+        
+
+
+
+
+				    			    		
      
     if(read_size == 0)
     {
