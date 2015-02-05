@@ -1,15 +1,17 @@
-/*
+/*t
     C socket server example
 */
  
-#include<stdio.h>
-#include<string.h>    //strlen
-#include<sys/socket.h>
-#include<arpa/inet.h> //inet_addr
-#include<unistd.h>    //write
+#include <stdio.h>
+#include <string.h>    //strlen
+#include <sys/socket.h>
+#include <arpa/inet.h> //inet_addr
+#include <unistd.h>    //write
  
 int main(int argc , char *argv[])
 {
+
+
 
   /* string arr[100][3];
    arr[0][0]='usname';
@@ -20,11 +22,16 @@ int main(int argc , char *argv[])
     int socket_desc , client_sock , c , read_size;
     struct sockaddr_in server , client;
     char client_message[2000]={NULL};
+    struct sockaddr_in server_addr,client_addr;
+
+
 
 
     //////database login////
+    char arr[100];
 
-    char sign_up[100];
+    /////char sign_up[100];
+
 
      //////////////
     //Create socket
@@ -59,6 +66,8 @@ int main(int argc , char *argv[])
      
     //accept connection from an incoming client
     client_sock = accept(socket_desc, (struct sockaddr *)&client, (socklen_t*)&c);
+    printf("\n I got a connection from (%s , %d)",inet_ntoa(client.sin_addr),ntohs(client.sin_port));
+    arr[100]=inet_ntoa(client.sin_addr);
     if (client_sock < 0)
     {
         perror("accept failed");
@@ -75,19 +84,29 @@ int main(int argc , char *argv[])
 
 
     ////////////deciding login or sign uo//////
- if (client_message=="1")
+    char user_name[1000]={"enter user name"};
+ if (strcmp( client_message,"s")==0)
  {
-     printf(" client choose 1");
+    
+     send(client_sock , option , strlen(option) , 0);
+     char Receive_option[100]={NULL};
+     recv(client_sock,Receive_option,100,0);
+     puts(Receive_option);
+
+     
+     puts(Receive_option);
  }
- else if (client_message=="2")
+ else if (strcmp( client_message,"q")==0)
  {
-    printf(" client choose 2");
+    printf(" client choose q");
      
  }
 ////////////////
 
    
     //Receive a message from client
+
+
 				while( (read_size = recv(client_sock , client_message , 2000 , 0)) > 0 )
 				{
 				    //Send the message back to client

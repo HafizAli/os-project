@@ -41,18 +41,36 @@ int main(int argc , char *argv[])
      puts(optionArray);
 
 /////////////user will input////////////
-char option_take[10];
-//printf("Enter option --1--for login or --2--- for sign up: \n");
+char option_take[50]={NULL};
+     printf("Enter option n");
 
-        ///scanf("%s" , message);
         gets(option_take);
+       
         ///printf("your input is %d\n",option_take );
-       if( send(sock , option_take , strlen(option_take) , 0) < 0)
+       if( send(sock , option_take ,strlen(option_take), 0) < 0)
         {
             puts("Send failed");
             return 1;
         }
-////////////////////////////
+     char option_take2[50]={NULL};
+        if( recv(sock , option_take2 , 2000 , 0) < 0)
+        {
+            puts("recv failed");
+         
+        }
+        puts(option_take2);/////// asking question
+        char user_name[100]={NULL};
+
+        gets(user_name);
+        //////////sending user_name
+        if( send(sock , user_name ,strlen(user_name), 0) < 0)
+        {
+            puts("Send failed");
+            return 1;
+        }
+
+
+///////////////////////////
 
 /////////keep communicating with server
    while(1)
