@@ -69,6 +69,23 @@ char option_take[50]={NULL};
             return 1;
         }
 
+          //////////////password///
+        char Receive_password[100]={NULL};
+         if( recv(sock , Receive_password , 2000 , 0) < 0)
+        {
+            puts("recv failed");
+         
+        }
+        puts(Receive_password);
+        char user_password[100]={NULL};
+ 
+        gets(user_password);
+        //////////sending user_name
+        if( send(sock , user_password ,strlen(user_password), 0) < 0)
+        {
+            puts("Send failed");
+            return 1;
+        }
 
 ///////////////////////////
 
