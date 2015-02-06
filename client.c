@@ -86,6 +86,26 @@ char option_take[50]={NULL};
             puts("Send failed");
             return 1;
         }
+        Receive_password[100]={NULL};
+         if( recv(sock , Receive_password , 2000 , 0) < 0)
+        {
+            puts("recv failed");
+         
+        }
+        puts(Receive_password);
+        printf("Now sign_IN:\n");
+        user_password[100]={NULL};
+        printf("Enter your user name:\n");
+        gets(user_password);
+        send(sock , user_password ,strlen(user_password), 0)
+        printf("Enter your Password:\n");
+        user_password[100]={NULL};
+        gets(user_password);
+        send(sock , user_password ,strlen(user_password), 0)
+         
+
+        
+        
 
 ///////////////////////////
 
