@@ -8,18 +8,16 @@
 #include <sys/un.h>
 #include <sys/types.h>
 
-	
-
-
 
 
 	int sock;
 	int client_sock;
-	int clint_to_client_socket;
-	struct sockaddr_in server,client,client2,clint_client_socket;
+	
+	struct sockaddr_in server,client,client2;
 
 
-	void *thread_read_function(int sock)
+
+void *thread_read_function(int sock)
 {
 	int read_size;
 	char client_message[200]={NULL};
@@ -46,9 +44,6 @@ void *thread_write_function(int sock)
 	}
 	pthread_exit("closing write thread");
 }
-
-
-
 
 
 void * client_listen_thread(int clint_sock)
@@ -79,7 +74,8 @@ void * client_listen_thread(int clint_sock)
 			perror("accept failed");
 			return 1;
 		}
-			int read,write;
+
+		int read,write;
 			pthread_t read_thread,write_thread;
 			read = pthread_create(&read_thread, NULL,thread_read_function,client_sock);
 			if (read != 0)
@@ -88,18 +84,13 @@ void * client_listen_thread(int clint_sock)
 				exit(EXIT_FAILURE);
 			}
 			//write thread genrate
-			write = pthread_create(&write_thread, NULL,thread_write_function, client_sock);
+			write = pthread_create(&write_thread, NULL,thread_write_function,client_sock);
 			if (write != 0)
 			{
 				perror("write Thread creation failed");
 				exit(EXIT_FAILURE);
 			}
-
-
 	}
-	/*
-	
-	*/
 }
 
 
@@ -152,34 +143,15 @@ int main(int argc , char *argv[])
 	
 	
 	puts(optionArray);
-
-		clint_to_client_socket = socket(AF_INET , SOCK_STREAM , 0);
-
-		clint_client_socket.sin_addr.s_addr =inet_addr(optionArray);
-		clint_client_socket.sin_family = AF_INET;
-		clint_client_socket.sin_port = htons( 8881 );
-		//Connect to remote server
-		if (connect(clint_to_client_socket , (struct sockaddr *)&clint_client_socket , sizeof(clint_client_socket)) < 0)
-		{
-			perror("connect failed. Error");
-			return 1;
-		}
-	
-	int read,write;
-	pthread_t read_thread,write_thread;
-	read = pthread_create(&read_thread, NULL,thread_read_function,clint_to_client_socket);
-	if (read != 0)
+	FILE *myfile;
+	myfile = fopen("ip.txt","w");
+	int i;
+	for(i=0;optionArray[i]!=NULL;i++)
 	{
-		perror("read Thread creation failed");
-		exit(EXIT_FAILURE);
+		putc(optionArray[i],myfile);
 	}
-	//write thread genrate
-	write = pthread_create(&write_thread, NULL,thread_write_function, clint_to_client_socket);
-	if (write != 0)
-	{
-		perror("write Thread creation failed");
-		exit(EXIT_FAILURE);
-	}
+	fclose(myfile);
+		system ("gnome-terminal -e ./Make_socket_than_chat");
 
 	while(1);
 	/////////////user will input////////////
