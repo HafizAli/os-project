@@ -56,6 +56,7 @@ int main(int argc , char *argv[])
 		clint_client_socket.sin_family = AF_INET;
 		clint_client_socket.sin_port = htons( 8881 );
 		//Connect to remote server
+		
 		if (connect(clint_to_client_socket , (struct sockaddr *)&clint_client_socket , sizeof(clint_client_socket)) < 0)
 		{
 			perror("connect failed. Error");
@@ -65,14 +66,14 @@ int main(int argc , char *argv[])
 
 			int read,write;
 			pthread_t read_thread,write_thread;
-			read = pthread_create(&read_thread, NULL,thread_read_function,argv[1]);
+			read = pthread_create(&read_thread, NULL,thread_read_function,clint_to_client_socket);
 			if (read != 0)
 			{
 				perror("read Thread creation failed");
 				exit(EXIT_FAILURE);
 			}
 			//write thread genrate
-			write = pthread_create(&write_thread, NULL,thread_write_function,argv[1]);
+			write = pthread_create(&write_thread, NULL,thread_write_function,clint_to_client_socket);
 			if (write != 0)
 			{
 				perror("write Thread creation failed");

@@ -8,15 +8,9 @@
 #include <sys/un.h>
 #include <sys/types.h>
 
-
-
 	int sock;
-	int client_sock;
-	
+	int client_sock;	
 	struct sockaddr_in server,client,client2;
-
-
-
 void *thread_read_function(int sock)
 {
 	int read_size;
@@ -53,7 +47,7 @@ void * client_listen_thread(int clint_sock)
 		printf("i am a cline but listning \n");
 		//create another socket for clint to clint comeunecate
 		client.sin_family = AF_INET;
-		client.sin_addr.s_addr =inet_addr("127.0.0.1");
+		client.sin_addr.s_addr =inet_addr("127.0.0.2");
 		client.sin_port = htons( 8881 );
 		//client clint binding
 		if( bind(clint_sock,(struct sockaddr *)&client , sizeof(client)) < 0)
@@ -98,24 +92,27 @@ void * client_listen_thread(int clint_sock)
 
 int main(int argc , char *argv[])
 {
+
+
 	int clint_sock;
 	int lis;
 	//create another socket for clint to clint comeunecate
 	clint_sock = socket(AF_INET , SOCK_STREAM , 0);
 	if (clint_sock == -1)
-	{
-	printf("Could not create socket for clint ");
-	}
+		{
+			printf("Could not create socket for clint ");
+		}
 	pthread_t client_com;
+	
 	lis = pthread_create(&client_com, NULL,client_listen_thread, clint_sock);
 	if (lis != 0)
-	{
-		perror("write Thread creation failed");
-		exit(EXIT_FAILURE);
-	}
+		{
+			perror("write Thread creation failed");
+			exit(EXIT_FAILURE);
+		}
 
-
-	//Create socket
+	
+	//Create socket for server comunication
 	sock = socket(AF_INET , SOCK_STREAM , 0);
 	if (sock == -1)
 	{
@@ -133,6 +130,10 @@ int main(int argc , char *argv[])
 			return 1;
 		}
 
+
+
+	
+
 	puts("Connected\n");
 	char optionArray[1000]={NULL};
 	if( recv(sock , optionArray , 1000 , 0) < 0)
@@ -143,20 +144,11 @@ int main(int argc , char *argv[])
 	
 	
 	puts(optionArray);
-	FILE *myfile;
-	myfile = fopen("ip.txt","w");
-	int i;
-	for(i=0;optionArray[i]!=NULL;i++)
-	{
-		putc(optionArray[i],myfile);
-	}
-	fclose(myfile);
-		system ("gnome-terminal -e ./Make_socket_than_chat");
 
-	while(1);
-	/////////////user will input////////////
+
+		/////////////user will input////////////
 	char option_take[50]={NULL};
-	printf("Enter option n");
+	printf("Enter option /n");
 	gets(option_take);
 	///printf("your input is %d\n",option_take );
 	if( send(sock , option_take ,strlen(option_take), 0) < 0)
@@ -164,35 +156,83 @@ int main(int argc , char *argv[])
 	puts("Send failed");
 	return 1;
 	}
+
+
 	char option_take2[50]={NULL};
 	if( recv(sock , option_take2 , 2000 , 0) < 0)
-	{
-	puts("recv failed");
-	}
-	puts(option_take2);/////// asking question
+		{
+		puts("recv failed");
+		}
+	puts(option_take2);/////// enter name
+
+
+
 	char user_name[100]={NULL};
-	gets(user_name);
+	 gets(user_name);
 	//////////sending user_name
 	if( send(sock , user_name ,strlen(user_name), 0) < 0)
-	{
-	puts("Send failed");
-	return 1;
-	}
+			{
+			puts("Send failed");
+			return 1;
+			}
+fflush(stdin);
+
+
+
 	//////////////password///
-	char Receive_password[100]={NULL};
-	if( recv(sock , Receive_password , 2000 , 0) < 0)
+	char r_password[100]={NULL};
+	if( recv(sock , r_password , 2000 , 0) < 0)
 	{
 	puts("recv failed");
 	}
-	puts(Receive_password);
+	puts(r_password);
+
+	//////////sending pas
 	char user_password[100]={NULL};
 	gets(user_password);
-	//////////sending user_name
-	if( send(sock , user_password ,strlen(user_password), 0) < 0)
+	
+		if( send(sock , user_password ,strlen(user_password), 0) < 0)
+		{
+		puts("Send failed");
+		return 1;
+		}
+/////////////////////////////searching
+
+//likhna aaa
+		printf("idarrrrrr\n");
+	
+	char ch[10]={NULL};
+	 recv(sock , ch , 1 , 0);
+	puts(ch);
+	int ipcount=ch[0];
+	ipcount=ipcount-48;
+	 
+	char f[100]={NULL};
+	int z;
+	for ( z= 0; z < ipcount ; z++)
 	{
-	puts("Send failed");
-	return 1;
+		 recv(sock , f , 100 , 0);
+		 printf(".....\n");
+		puts(f);
 	}
+	////////////line lgao
+
+	char input_lo[100]={NULL};
+
+	printf("Enter ip of that person:\n");
+	gets(input_lo);
+
+	FILE *myfile;
+	myfile = fopen("ip.txt","w");
+	int i;
+	for(i=0;input_lo[i]!=NULL;i++)
+	{
+		putc(input_lo[i],myfile);
+	}
+	fclose(myfile);
+		system ("gnome-terminal -e ./Make_socket_than_chat");
+		    pthread_exit(NULL);
+
 	/*
 	 char Receive_pass[100]={NULL};
 	if( recv(sock , Receive_pass , 100 , 0) < 0)
